@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>HTML5 Canvas</title>
+</head>
+<body>
+<canvas id="draw" width="800" height="800"></canvas>
+<script>
+
+const canvas = document.querySelector('#draw');
+const ctx =  canvas.getContext('2d');
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+ctx.strokeStyle = '#BADA55';
+ctx.lineJoin = 'round';
+ctx.lineCap = 'round';
+ctx.lineWidth = 100;
+
+
+let isDrawing = false;
+let lastX = 0;
+let lastY = 0;
+
+//mother - effing hsl - have multiple colors when drawing one line, instead of just one color
+let hue = 0;
+
+//change line width
+let direction = true;
+
+
+function draw(e){
+if (!isDrawing) return; //stop the fn from running when they are not moused down
+
+ctx.strokeStyle = `hsl(${hue}, 100%, 50%)`;
+// have a multiple coloured line, not just one color
+
+//
+
+ctx.beginPath();
+//start from
+ctx.moveTO(lastX, lastY);
+//go to
+ctx.lineTo(e.offsetX, e.offsetY);
+ctx.stroke();
+[lastX, lastY] = [e.offsetX, e.offsetY];
+
+//change color of line when color used
+hue++;
+if (hue >= 360) {
+  hue = 0;
+}
+
+// vary line width start
+if(ctx.lineWidth >= 100 || ctx.lineWidth <= 1) {
+  direction = !direction; //flip the direction?
+}
+if(direction) {
+  ctx.lineWidth++
+} else {
+  ctx.lineWidth--;
+}
+
+
+}
+//vary the line width  end
+
+
+canvas.addEventListener('mousedown', (e) => {
+
+  isDrawing = true;
+  [lastX, lastY]  =  [e.offsetX, e.offsetY]; //an destructering array
+});
+
+canvas.addEventListener('mousemove', draw);
+canvas.addEventListener('mouseup', () => isDrawing = false);
+canvas.addEventListener('mouseout', () => isDrawing = false);
+
+
+</script>
+
+<style>
+  html, body {
+    margin:0;
+  }
+</style>
+
+</body>
+</html>
